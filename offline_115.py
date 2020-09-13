@@ -100,8 +100,7 @@ class Lixian115:
         if isinstance(url_or_urls, str):
             url: str = url_or_urls
             form_data.update({'url': url})
-            print(f'添加一个115离线任务')
-            print(f'最终的form data是{form_data}')
+            print(f'Add one 115 offline task...')
             self.session.headers.update({'Host': '115.com'})
             res = self.session.post('https://115.com/web/lixian/?ct=lixian&ac=add_task_url', data=form_data)
             try:
@@ -115,8 +114,7 @@ class Lixian115:
         else:
             urls: Sequence[str] = url_or_urls
             form_data.update({f'url[{i}]': url for i, url in enumerate(urls)})
-            print(f'添加多个115离线任务')
-            print(f'最终的form data是{form_data}')
+            print(f'Add multiple 115 offline tasks...')
             self.session.headers.update({'Host': '115.com'})
             res = self.session.post('https://115.com/web/lixian/?ct=lixian&ac=add_task_urls', data=form_data) # add_task_urls instead of add_task_url
             try:
@@ -162,7 +160,6 @@ class Lixian115:
             result = res.json()
         except JSONDecodeError as e:
             raise self.GetSignAndTimeError from e
-        print(f'result is {result}')
         if result['state'] != True or not result['sign'] or not result['time']:
             raise self.GetSignAndTimeError
         return result['sign'], result['time']
@@ -178,7 +175,6 @@ class Lixian115:
         except JSONDecodeError as e:
             self._is_login = False
         else:
-            print(f'check_login result is {result}')
             self._is_login = result['state'] == True
         assert (self._is_login is not None)
         return self._is_login
@@ -205,8 +201,9 @@ class Lixian115:
     def get_cookie_jar_from_semicolon_string(semi_string: str) -> RequestsCookieJar:
         cookie_dict = {}
         for kv_str in semi_string.split(';'):
-            k, v = kv_str.strip().split('=')
-            cookie_dict[k.strip()] = v.strip()
+            if '=' in kv_str:
+                k, v = kv_str.strip().split('=')
+                cookie_dict[k.strip()] = v.strip()
         print(f'cookie_dict is {cookie_dict}')
         cookie_jar = requests.utils.cookiejar_from_dict(cookie_dict)
         return cookie_jar
