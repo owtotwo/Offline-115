@@ -22,6 +22,7 @@ optional arguments:
 ## Requirements
 - Windows 10
 - Python3.7+
+- pip
 - pypi
   + bencode.py == 4.0.0
   + requests == 2.24.0
@@ -32,6 +33,9 @@ optional arguments:
 $ (Login your 115 and Save the cookies to file 'C:\Users\<You>\.115.cookies' in format 'Semicolon separated name=value pairs' by EditThisCookie)
 $ git clone https://github.com/owtotwo/Offline-115.git
 $ cd Offline-115
+$ py -3 -m venv .venv
+$ .\.venv\Scripts\activate.bat
+$ pip install -r requirements.txt
 $ py -3 offine_115.py -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"
 ```
 
@@ -50,32 +54,32 @@ $ not today...
 
 ### Help (显示命令行使用方法)
 ``` bash
-lx115 -h
+py -3 offline_115.py -h
 ```
 
 ### Add torrent (单个本地种子文件)
 ``` bash
-lx115 -t 'C:\Users\<You>\Desktop\abc.torrent'
+py -3 offline_115.py -t 'C:\Users\<You>\Desktop\abc.torrent'
 ```
 
 ### Add magnet (单个磁力链接)
 ``` bash
-lx115 -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"
+py -3 offline_115.py -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"
 ```
 
 ### Add multiple torrents (多个本地种子文件)
 ``` bash
-lx115 -t 'C:\Users\<You>\Desktop\abc.torrent' 'C:\Users\<You>\Desktop\def.torrent'
+py -3 offline_115.py -t 'C:\Users\<You>\Desktop\abc.torrent' 'C:\Users\<You>\Desktop\def.torrent'
 ```
 
 ### Add multiple magnets (多个磁力链接)
 ``` bash
-lx115 -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a" "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88b"
+py -3 offline_115.py -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a" "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88b"
 ```
 
 ### Help (显示命令行工具当前版本)
 ``` bash
-lx115 -v
+py -3 offline_115.py -v
 ```
 
 ## Related Repo
