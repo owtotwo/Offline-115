@@ -17,7 +17,7 @@ __author__ = "owtotwo"
 __copyright__ = "Copyright 2020"
 __credits__ = ["owtotwo"]
 __license__ = "LGPLv3"
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __maintainer__ = "owtotwo"
 __email__ = "owtotwo@163.com"
 __status__ = "Experimental"
@@ -66,15 +66,13 @@ class Lixian115:
         if not self.cookies_path.is_file():
             raise self.CookiesFileNotFound
         self.session: requests.Session = requests.session()
-        self.session.cookies = self.get_cookie_jar_from_file()
-
-        if self.is_cookies_valid():
-            print(f'Cookies are valid!')
-        else:
-            print(f'Cookies are NOT valid!')
-        print(f'self.session.cookies is {self.session.cookies.items()}')
+        try:
+            self.session.cookies = self.get_cookie_jar_from_file()
+        except Exception as e:
+            raise self.CookiesNotVaild from e
+        if not self.is_cookies_valid():
+            raise self.CookiesNotVaild(f'115的Cookies必须包含UID,CID,SEID字段')
         self.session.headers.update(self.DEFAULT_COMMON_HEADERS)
-        print(f'self.session.headers is {self.session.headers.items()}')
         self._is_login: Optional[bool] = None
         self._uid: Optional[int] = None
 
@@ -188,7 +186,6 @@ class Lixian115:
                 continue
             lines.append(line)
         cookie_semicolon_string = ' '.join(lines)
-        print(f'cookie_semicolon_string is {cookie_semicolon_string}')
         cookie_jar = self.get_cookie_jar_from_semicolon_string(cookie_semicolon_string)
         return cookie_jar
 
@@ -204,7 +201,6 @@ class Lixian115:
             if '=' in kv_str:
                 k, v = kv_str.strip().split('=')
                 cookie_dict[k.strip()] = v.strip()
-        print(f'cookie_dict is {cookie_dict}')
         cookie_jar = requests.utils.cookiejar_from_dict(cookie_dict)
         return cookie_jar
 
@@ -237,7 +233,7 @@ def get_magnet_from_torrent_file(torrent_file: Path) -> str:
 def get_file_path(path_string) -> Path:
     p = Path(path_string)
     if not p.is_file():
-        raise argparse.ArgumentTypeError(f'{path_string} is not a valid file path.')
+        raise argparse.ArgumentTypeError(f'{path_string} is not a valid path for an existed file.')
     return p
 
 
@@ -245,7 +241,7 @@ def get_file_path(path_string) -> Path:
 def get_folder_path(path_string) -> Path:
     p = Path(path_string)
     if not p.is_dir():
-        raise argparse.ArgumentTypeError(f'{path_string} is not a valid folder path.')
+        raise argparse.ArgumentTypeError(f'{path_string} is not a valid path for an existed folder.')
     return p
 
 
@@ -268,8 +264,30 @@ def main() -> None:
                         help='本地115的cookies文件（仅支持分号间隔的cookies字符串为文本内容）')
     parser.add_argument('-t', '--torrent', metavar='torrent', type=get_torrent_file_path, nargs='+', help='本地种子文件')
     parser.add_argument('-m', '--magnet', metavar='magnet', type=str, nargs='+', help='磁力链接（最多15个）')
+    parser.add_argument('--check', metavar='check_cookies', action='store_const', const=True, default=False, help='检查本地cookies是否能正常登陆115')
     parser.add_argument('-v', '--version', action='version', version=f'%(prog)s {__version__}', help='显示此命令行当前版本')
     args: argparse.Namespace = parser.parse_args()
+    if not args.check and not args.magnet and not args.torrent:
+        parser.print_help()
+        exit(0)
+    print(f'115 cookies file path is {args.cookies} ...')
+    if args.check == True:
+        check_result: bool = False
+        try:
+            lx: Lixian115 = Lixian115(cookies_path=args.cookies)
+            check_result = lx.is_login()
+        except Lixian115.CookiesFileNotFound as e:
+            print(f'115的cookies文件找不到: {e}，可能需要创建 $HOME\\.115.cookies 文件并填入cookies内容')
+        except Lixian115.CookiesNotVaild as e:
+            print(f'115的cookies文件不合规范: {e}')
+        except Exception as e:
+            print(f'检查115cookies文件时因未知原因出错: {e}')
+        if check_result == True:
+            print(f'The 115 cookies are Ok!')
+            exit(0)
+        else:
+            print(f'There is something wrong with the 115 cookies.')
+            exit(1)
     urls: List[str] = []
     if args.magnet and len(args.magnet) > 0:
         urls.extend(args.magnet)
@@ -289,7 +307,7 @@ def main() -> None:
         print(f'多于15个磁力链接，仅提交前15个')
         urls = urls[:15]
     try:
-        lx = Lixian115()
+        lx: Lixian115 = Lixian115(cookies_path=args.cookies)
         lx.add_tasks(urls)
     except Lixian115.CookiesFileNotFound as e:
         print(f'115的cookies文件找不到: {e}')
