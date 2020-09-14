@@ -3,7 +3,7 @@
 `author: owtotwo`
 
 ```
-usage: lixian.py [-h] [-c cookies] [-t torrent [torrent ...]] [-m magnet [magnet ...]] [-v]
+usage: offl115 [-h] [-c cookies] [-t torrent [torrent ...]] [-m magnet [magnet ...]] [-v]
 
 115离线下载命令行工具（用于添加115离线下载任务）
 
@@ -28,21 +28,25 @@ optional arguments:
   + requests == 2.24.0
 
 
-## Run on Win10
+## Install and Run on Win10
+```
+$ pip install Offline-115
+$ (Login your 115 and Save the cookies to file 'C:\Users\<You>\.115.cookies' in format 'Semicolon separated name=value pairs' by EditThisCookie)
+$ offl115 -h
+$ offl115 -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"
+```
+
+
+## Install from source code and Run on Win10
+(* Need [Git for Windows](https://git-scm.com/download/win))
+
 ```
 $ (Login your 115 and Save the cookies to file 'C:\Users\<You>\.115.cookies' in format 'Semicolon separated name=value pairs' by EditThisCookie)
 $ git clone https://github.com/owtotwo/Offline-115.git
 $ cd Offline-115
-$ py -3 -m venv .venv
-$ .\.venv\Scripts\activate.bat
-$ pip install -r requirements.txt
-$ py -3 offine_115.py -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"
-```
-
-## Install
-
-```
-$ not today...
+$ py -3 setup.py install
+$ offl115 -h
+$ offl115 -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"
 ```
 
 
@@ -54,32 +58,32 @@ $ not today...
 
 ### Help (显示命令行使用方法)
 ``` bash
-py -3 offline_115.py -h
+offl115 -h
 ```
 
 ### Add torrent (单个本地种子文件)
 ``` bash
-py -3 offline_115.py -t 'C:\Users\<You>\Desktop\abc.torrent'
+offl115 -t 'C:\Users\<You>\Desktop\abc.torrent'
 ```
 
 ### Add magnet (单个磁力链接)
 ``` bash
-py -3 offline_115.py -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"
+offl115 -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"
 ```
 
 ### Add multiple torrents (多个本地种子文件)
 ``` bash
-py -3 offline_115.py -t 'C:\Users\<You>\Desktop\abc.torrent' 'C:\Users\<You>\Desktop\def.torrent'
+offl115 -t 'C:\Users\<You>\Desktop\abc.torrent' 'C:\Users\<You>\Desktop\def.torrent'
 ```
 
 ### Add multiple magnets (多个磁力链接)
 ``` bash
-py -3 offline_115.py -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a" "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88b"
+offl115 -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a" "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88b"
 ```
 
 ### Help (显示命令行工具当前版本)
 ``` bash
-py -3 offline_115.py -v
+offl115 -v
 ```
 
 ## Related Repo
