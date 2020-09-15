@@ -18,13 +18,14 @@ __author__ = "owtotwo"
 __copyright__ = "Copyright 2020"
 __credits__ = ["owtotwo"]
 __license__ = "LGPLv3"
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 __maintainer__ = "owtotwo"
 __email__ = "owtotwo@163.com"
 __status__ = "Experimental"
 
 ENV_115_COOKIES_KEY: str = 'OFFLINE_115_COOKIES_PATH'
 DEFAULT_COOKIES_FILE_PATH: Path = Path.home() / '.115.cookies'
+
 
 class Lixian115:
     DEFAULT_COMMON_HEADERS: Dict[str, str] = {
@@ -255,6 +256,21 @@ def get_torrent_file_path(path_string) -> Path:
     return p
 
 
+# get chain from __cause__
+def get_exception_chain(e: BaseException) -> List[BaseException]:
+    chain: List[BaseException] = [e]
+    last_exception: BaseException = e
+    while last_exception.__cause__ is not None:
+        chain.append(last_exception.__cause__)
+        last_exception = last_exception.__cause__
+    return chain
+
+
+# return string like '[aaa] -> [bbb] -> [ccc]'
+def format_exception_chain(e: BaseException):
+    return ''.join(f'[{exc}]' if i == 0 else f' -> [{exc}]' for i, exc in enumerate(reversed(get_exception_chain(e))))
+
+
 # 命令行入口
 def main() -> None:
     parser = argparse.ArgumentParser(description='115离线下载命令行工具（用于添加115离线下载任务）', formatter_class=argparse.RawTextHelpFormatter)
@@ -262,7 +278,7 @@ def main() -> None:
                         '--cookies',
                         metavar='cookies',
                         type=get_file_path,
-                        default=DEFAULT_COOKIES_FILE_PATH,
+                        default=None,
                         help=f'本地115的cookies文件路径（仅支持分号间隔的cookies字符串为文本内容）\n' + f'若无此值，则根据环境变量`{ENV_115_COOKIES_KEY}`查找\n' +
                         f'若无环境变量，则根据默认cookies路径`{DEFAULT_COOKIES_FILE_PATH}`查找')
     parser.add_argument('-t', '--torrent', metavar='torrent', type=get_torrent_file_path, nargs='+', help='本地种子文件')
@@ -270,14 +286,17 @@ def main() -> None:
     parser.add_argument('--check', metavar='check_cookies', action='store_const', const=True, default=False, help='检查本地cookies是否能正常登陆115')
     parser.add_argument('-v', '--version', action='version', version=f'%(prog)s {__version__}', help='显示此命令行当前版本')
     args: argparse.Namespace = parser.parse_args()
+    env_cookies_path: Optional[str] = environ.get(ENV_115_COOKIES_KEY)
     if not args.check and not args.magnet and not args.torrent:
         parser.print_help()
         exit(0)
-    cookies_path: Path = args.cookies
-    env_cookies_path: Optional[str] = environ.get(ENV_115_COOKIES_KEY)
-    if env_cookies_path is not None:
-        cookies_path = Path(env_cookies_path)
+    if args.cookies is not None:
+        cookies_path: Path = args.cookies
+    elif env_cookies_path is not None:
+        cookies_path: Path = Path(env_cookies_path)
         print(f'Environment Variable `{ENV_115_COOKIES_KEY}` Found!')
+    else:
+        cookies_path: Path = DEFAULT_COOKIES_FILE_PATH
     print(f'115 cookies file path is {cookies_path} ...')
     if args.check == True:
         check_result: bool = False
@@ -285,11 +304,11 @@ def main() -> None:
             lx: Lixian115 = Lixian115(cookies_path=cookies_path)
             check_result = lx.is_login()
         except Lixian115.CookiesFileNotFound as e:
-            print(f'115的cookies文件找不到: {e}，可能需要创建 {DEFAULT_COOKIES_FILE_PATH} 文件并填入cookies内容')
+            print(f'115的cookies文件找不到: {format_exception_chain(e)}，可能需要创建 {DEFAULT_COOKIES_FILE_PATH} 文件并填入cookies内容')
         except Lixian115.CookiesNotVaild as e:
-            print(f'115的cookies文件不合规范: {e}')
+            print(f'115的cookies文件不合规范: {format_exception_chain(e)}')
         except Exception as e:
-            print(f'检查115cookies文件时因未知原因出错: {e}')
+            print(f'检查115cookies文件时因未知原因出错: {format_exception_chain(e)}')
         if check_result == True:
             print(f'The 115 cookies are Ok!')
             exit(0)
@@ -303,9 +322,9 @@ def main() -> None:
         try:
             urls.extend(get_magnet_from_torrent_file(t) for t in args.torrent)
         except Torrent2MagnetError as e:
-            print(e)
+            print(format_exception_chain(e))
         except Exception as e:
-            print(f'未知原因出错: {e}')
+            print(f'未知原因出错: {format_exception_chain(e)}')
             traceback.print_exc(chain=True)
     if len(urls) == 0:
         print(f'没有有效的磁力链接')
@@ -318,19 +337,19 @@ def main() -> None:
         lx: Lixian115 = Lixian115(cookies_path=cookies_path)
         lx.add_tasks(urls)
     except Lixian115.CookiesFileNotFound as e:
-        print(f'115的cookies文件找不到: {e}')
+        print(f'115的cookies文件找不到: {format_exception_chain(e)}')
     except Lixian115.CookiesNotVaild as e:
-        print(f'115的cookies文件不合规范: {e}')
+        print(f'115的cookies文件不合规范: {format_exception_chain(e)}')
     except Lixian115.AddTasksError as e:
-        print(f'添加离线任务出错: {e}')
+        print(f'添加离线任务出错: {format_exception_chain(e)}')
     except Lixian115.GetUidError as e:
-        print(f'获取115的UID出错: {e}')
+        print(f'获取115的UID出错: {format_exception_chain(e)}')
     except Lixian115.GetSignAndTimeError as e:
-        print(f'获取115的sign与time值出错: {e}')
+        print(f'获取115的sign与time值出错: {format_exception_chain(e)}')
     except Lixian115.LoginWithCookiesError as e:
-        print(f'提供的115cookies不能成功登录: {e}')
+        print(f'提供的115cookies不能成功登录: {format_exception_chain(e)}')
     except Exception as e:
-        print(f'未知原因出错: {e}')
+        print(f'未知原因出错: {format_exception_chain(e)}')
         traceback.print_exc(chain=True)
 
 
