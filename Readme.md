@@ -10,7 +10,9 @@ usage: offl115 [-h] [-c cookies] [-t torrent [torrent ...]] [-m magnet [magnet .
 optional arguments:
   -h, --help            show this help message and exit
   -c cookies, --cookies cookies
-                        本地115的cookies文件（仅支持分号间隔的cookies字符串为文本内容）
+                        本地115的cookies文件路径（仅支持分号间隔的cookies字符串为文本内容）
+                        若无此值，则根据环境变量`OFFLINE_115_COOKIES_PATH`查找
+                        若无环境变量，则根据默认cookies路径`C:\Users\AT\.115.cookies`查找
   -t torrent [torrent ...], --torrent torrent [torrent ...]
                         本地种子文件
   -m magnet [magnet ...], --magnet magnet [magnet ...]
@@ -55,9 +57,14 @@ $ offl115 -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"
 
 ## Usage
 
-### Login (登录)
-请在115浏览器登录后，推荐使用 [EditThisCookie](http://www.editthiscookie.com/) 插件导出 cookies 到 `{HOMEPATH}/.115.cookies` 即
-可正常使用。cookies 只支持分号分隔的格式(Semicolon separated name=value pairs)，如`a=1;b=2;c=3;`。
+### 设定Cookies (在115浏览器中登录115后获取)
+- 请在115浏览器登录后，推荐使用 [EditThisCookie](http://www.editthiscookie.com/) 插件导出 cookies 到 `{HOMEPATH}/.115.cookies` 即
+可正常使用。
+- Cookies 只支持分号分隔的格式(Semicolon separated name=value pairs)，如`a=1;b=2;c=3;`。
+- 脚本对于115cookies路径会根据以下顺序获取：
+  1. 命令行参数中-c/--cookies指定的cookies文件路径
+  2. 环境变量中 `OFFLINE_115_COOKIES_PATH` 变量所指定的路径
+  3. 默认路径 `{HOMEPATH}/.115.cookies` 
 
 ### Help (显示命令行使用方法)
 ``` bash
@@ -65,11 +72,24 @@ $ offl115 -h
 ```
 
 ### Check cookies (检查本地115cookies文件是否合法)
+
+Run with default cookies path:
 ``` bash
 $ offl115 --check
 115 cookies file path is C:\Users\<You>\.115.cookies ...
 The 115 cookies are Ok!
+```
 
+Run in CMD:
+``` cmd
+$ set OFFLINE_115_COOKIES_PATH=C:\Users\<You>\Documents\115.cookies && offl115 --check
+Environment Variable `OFFLINE_115_COOKIES_PATH` Found!
+115 cookies file path is C:\Users\<You>\Documents\115.cookies ...
+The 115 cookies are Ok!
+```
+
+Run with option `-c` or `--cookies`:
+``` bash
 $ offl115 --check -c "C:\Your\New\Path\cookies.txt"
 115 cookies file path is C:\Your\New\Path\cookies.txt ...
 The 115 cookies are Ok!
