@@ -2,6 +2,8 @@
 
 `author: owtotwo`
 
+*可配合[extract_115_cookies_ext](https://github.com/owtotwo/extract_115_cookies_ext)项目使用*
+
 ```
 usage: offl115 [-h] [-c cookies] [-t torrent [torrent ...]] [-m magnet [magnet ...]] [--check] [-v]
 
@@ -32,9 +34,14 @@ optional arguments:
 
 
 ## Install and Run on Win10
+First, Install [extract_115_cookies_ext](https://github.com/owtotwo/extract_115_cookies_ext/releases) in 115 browser, Login and Save the 115 cookies to file 'C:\Users\<You>\.115.cookies'. (Make sure the prefix dot in `.115.cookies`)
+
+OR, Login your 115 and Save the cookies to file 'C:\Users\<You>\.115.cookies' in format 'Semicolon separated name=value pairs' by [EditThisCookie](http://www.editthiscookie.com/).
+
+Then,
+
 ```
 $ pip install Offline-115
-$ (Login your 115 and Save the cookies to file 'C:\Users\<You>\.115.cookies' in format 'Semicolon separated name=value pairs' by EditThisCookie)
 $ offl115 -h
 $ offl115 --check (Make sure it prints 'The 115 cookies are Ok!')
 $ offl115 -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"
@@ -44,8 +51,11 @@ $ offl115 -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"
 ## Install from source code and Run on Win10
 (* Need [Git for Windows](https://git-scm.com/download/win))
 
+Get the 115 cookies file as above at first.
+
+Then,
+
 ```
-$ (Login your 115 and Save the cookies to file 'C:\Users\<You>\.115.cookies' in format 'Semicolon separated name=value pairs' by EditThisCookie)
 $ git clone https://github.com/owtotwo/Offline-115.git
 $ cd Offline-115
 $ py -3 setup.py install
