@@ -2,7 +2,7 @@
 
 `author: owtotwo`
 
-*可配合[extract_115_cookies_ext](https://github.com/owtotwo/extract_115_cookies_ext)项目使用*
+*可配合 [extract_115_cookies_ext](https://github.com/owtotwo/extract_115_cookies_ext) 项目使用*
 
 ```
 usage: offl115 [-h] [-c cookies] [-t torrent [torrent ...]] [-m magnet [magnet ...]] [--check] [-v]
@@ -44,10 +44,10 @@ Get the 115 cookies file as above at first.
 
 Then,
 
-1. Download the latest version zip file in [release](https://github.com/owtotwo/Offline-115/releases)
-2. Extract zip file to your Win10 PC (e.g.: C:\Users\<You>\AppData\Local\Offline-115)
-3. Add the folder path you extracted in step 2 to PATH (the Windows Environment Variable)
-4. Open Powershell or CMD, run `offl115 --check` and `offl115 -m "magnet:?xt=urn:btih:<Your-magnet-url>"`
+1. Download the latest version zip file in [release page](https://github.com/owtotwo/Offline-115/releases);
+2. Extract zip file to your Win10 PC (e.g.: C:\Users\<You>\AppData\Local\Offline-115);
+3. Add the folder path you extracted in step 2 to PATH (the Windows Environment Variable);
+4. Open Powershell or CMD, run `offl115 --check` and `offl115 -m "magnet:?xt=urn:btih:<Your-magnet-url>"`.
 
 
 ## Install by pip and Run on Win10
