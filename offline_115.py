@@ -6,7 +6,7 @@ from collections import OrderedDict
 from json.decoder import JSONDecodeError
 from os import environ
 from pathlib import Path
-from typing import Dict, List, Optional, OrderedDict, Sequence, Tuple, Union
+from typing import Dict, Final, List, Optional, OrderedDict, Sequence, Tuple, Union
 
 import bencodepy
 import requests
@@ -14,21 +14,21 @@ import requests.utils
 from bencodepy.exceptions import BencodeDecodeError
 from requests.cookies import RequestsCookieJar
 
-__author__ = "owtotwo"
-__copyright__ = "Copyright 2020"
-__credits__ = ["owtotwo"]
-__license__ = "LGPLv3"
-__version__ = "0.1.3"
-__maintainer__ = "owtotwo"
-__email__ = "owtotwo@163.com"
-__status__ = "Experimental"
+__author__: Final[str] = "owtotwo"
+__copyright__: Final[str] = "Copyright 2020 owtotwo"
+__credits__: Final[Sequence[str]] = ["owtotwo"]
+__license__: Final[str] = "LGPLv3"
+__version__: Final[str] = "0.1.3"
+__maintainer__: Final[str] = "owtotwo"
+__email__: Final[str] = "owtotwo@163.com"
+__status__: Final[str] = "Experimental"
 
-ENV_115_COOKIES_KEY: str = 'OFFLINE_115_COOKIES_PATH'
-DEFAULT_COOKIES_FILE_PATH: Path = Path.home() / '.115.cookies'
+ENV_115_COOKIES_KEY: Final[str] = 'OFFLINE_115_COOKIES_PATH'
+DEFAULT_COOKIES_FILE_PATH: Final[Path] = Path.home() / '.115.cookies'
 
 
 class Lixian115:
-    DEFAULT_COMMON_HEADERS: Dict[str, str] = {
+    DEFAULT_COMMON_HEADERS: Final[Dict[str, str]] = {
         'Connection': 'keep-alive',
         'Accept': 'application/json, text/javascript, */*; q=0.01',
         'Origin': 'https://115.com',
@@ -38,7 +38,7 @@ class Lixian115:
         'Accept-Language': 'zh-CN,zh;q=0.9',
         'X-Requested-With': 'XMLHttpRequest',
     }
-    COOKIES_SHOULD_HAVE_KEYS: Sequence[str] = ('UID', 'CID', 'SEID')
+    COOKIES_SHOULD_HAVE_KEYS: Final[Sequence[str]] = ('UID', 'CID', 'SEID')
 
     class CookiesFileNotFound(Exception):
         def __init__(self, msg='找不到存放115cookies的文件', *args, **kwargs) -> None:
@@ -279,8 +279,9 @@ def main() -> None:
                         metavar='cookies',
                         type=get_file_path,
                         default=None,
-                        help=f'本地115的cookies文件路径（仅支持分号间隔的cookies字符串为文本内容）\n' + f'若无此值，则根据环境变量`{ENV_115_COOKIES_KEY}`查找\n' +
-                        f'若无环境变量，则根据默认cookies路径`{DEFAULT_COOKIES_FILE_PATH}`查找')
+                        help=f'本地115的cookies文件路径（仅支持分号间隔的cookies字符串为文本内容）\n' \
+                            f'若无此值，则根据环境变量`{ENV_115_COOKIES_KEY}`查找\n' \
+                            f'若无环境变量，则根据默认cookies路径`{DEFAULT_COOKIES_FILE_PATH}`查找')
     parser.add_argument('-t', '--torrent', metavar='torrent', type=get_torrent_file_path, nargs='+', help='本地种子文件')
     parser.add_argument('-m', '--magnet', metavar='magnet', type=str, nargs='+', help='磁力链接（最多15个）')
     parser.add_argument('--check', metavar='check_cookies', action='store_const', const=True, default=False, help='检查本地cookies是否能正常登陆115')
