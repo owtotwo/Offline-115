@@ -6,19 +6,19 @@ from collections import OrderedDict
 from json.decoder import JSONDecodeError
 from os import environ
 from pathlib import Path
+from sys import exit
 from typing import Dict, Final, List, Optional, OrderedDict, Sequence, Tuple, Union
 
 import bencodepy
 import requests
 import requests.utils
-from bencodepy.exceptions import BencodeDecodeError
 from requests.cookies import RequestsCookieJar
 
 __author__: Final[str] = "owtotwo"
 __copyright__: Final[str] = "Copyright 2020 owtotwo"
 __credits__: Final[Sequence[str]] = ["owtotwo"]
 __license__: Final[str] = "LGPLv3"
-__version__: Final[str] = "0.1.3"
+__version__: Final[str] = "0.1.4"
 __maintainer__: Final[str] = "owtotwo"
 __email__: Final[str] = "owtotwo@163.com"
 __status__: Final[str] = "Experimental"
@@ -218,7 +218,7 @@ class Torrent2MagnetError(Exception):
 def get_magnet_from_torrent_file(torrent_file: Path) -> str:
     try:
         decoded_result = bencodepy.bread(torrent_file)
-    except BencodeDecodeError as e:
+    except bencodepy.BencodeDecodeError as e:
         raise Torrent2MagnetError from e
     if not isinstance(decoded_result, OrderedDict):
         raise Torrent2MagnetError(msg=f'种子文件转磁力链接出错: 期望bencodepy.bread解析出来的结果是OrderedDict，结果却是{type(decoded_result).__name__}')
