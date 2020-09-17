@@ -33,10 +33,25 @@ optional arguments:
   + requests == 2.24.0
 
 
-## Install and Run on Win10
-First, Install [extract_115_cookies_ext](https://github.com/owtotwo/extract_115_cookies_ext/releases) in 115 browser, Login and Save the 115 cookies to file 'C:\Users\<You>\.115.cookies'. (Make sure the prefix dot in `.115.cookies`)
+## Before Installation
+Install [extract_115_cookies_ext](https://github.com/owtotwo/extract_115_cookies_ext/releases) in 115 browser, Login and Save the 115 cookies to file 'C:\Users\<You>\.115.cookies'. (Make sure the prefix dot in `.115.cookies`)
 
 OR, Login your 115 and Save the cookies to file 'C:\Users\<You>\.115.cookies' in format 'Semicolon separated name=value pairs' by [EditThisCookie](http://www.editthiscookie.com/).
+
+
+## Install Release Binary and Run on Win10
+Get the 115 cookies file as above at first.
+
+Then,
+
+1. Download the latest version zip file in [release](https://github.com/owtotwo/Offline-115/releases)
+2. Extract zip file to your Win10 PC (e.g.: C:\Users\<You>\AppData\Local\Offline-115)
+3. Add the folder path you extracted in step 2 to PATH (the Windows Environment Variable)
+4. Open Powershell or CMD, run `offl115 --check` and `offl115 -m "magnet:?xt=urn:btih:<Your-magnet-url>"`
+
+
+## Install by pip and Run on Win10
+Get the 115 cookies file as above at first.
 
 Then,
 
@@ -62,6 +77,16 @@ $ py -3 setup.py install
 $ offl115 -h
 $ offl115 --check (Make sure it prints 'The 115 cookies are Ok!')
 $ offl115 -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"
+```
+
+OR, just run the script:
+
+```
+$ git clone https://github.com/owtotwo/Offline-115.git
+$ cd Offline-115
+$ py -3 offline_115.py -h
+$ py -3 offline_115.py --check (Make sure it prints 'The 115 cookies are Ok!')
+$ py -3 offline_115.py -m "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"
 ```
 
 
