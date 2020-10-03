@@ -1,12 +1,12 @@
 import argparse
 import base64
 import hashlib
+import sys
 import traceback
 from collections import OrderedDict
 from json.decoder import JSONDecodeError
 from os import environ
 from pathlib import Path
-from sys import exit
 from typing import Dict, Final, List, Optional, OrderedDict, Sequence, Tuple, Union
 
 import bencodepy
@@ -14,14 +14,14 @@ import requests
 import requests.utils
 from requests.cookies import RequestsCookieJar
 
-__author__: Final[str] = "owtotwo"
-__copyright__: Final[str] = "Copyright 2020 owtotwo"
-__credits__: Final[Sequence[str]] = ["owtotwo"]
-__license__: Final[str] = "LGPLv3"
-__version__: Final[str] = "0.1.4"
-__maintainer__: Final[str] = "owtotwo"
-__email__: Final[str] = "owtotwo@163.com"
-__status__: Final[str] = "Experimental"
+__author__: Final[str] = 'owtotwo'
+__copyright__: Final[str] = 'Copyright 2020 owtotwo'
+__credits__: Final[Sequence[str]] = ['owtotwo']
+__license__: Final[str] = 'LGPLv3'
+__version__: Final[str] = '0.1.5'
+__maintainer__: Final[str] = 'owtotwo'
+__email__: Final[str] = 'owtotwo@163.com'
+__status__: Final[str] = 'Experimental'
 
 ENV_115_COOKIES_KEY: Final[str] = 'OFFLINE_115_COOKIES_PATH'
 DEFAULT_COOKIES_FILE_PATH: Final[Path] = Path.home() / '.115.cookies'
@@ -109,7 +109,7 @@ class Lixian115:
             except JSONDecodeError as e:
                 raise self.AddTasksError from e
             if result['state'] != True:
-                raise self.AddTasksError(msg=f'添加单个离线任务失败: error_msg为{result["error_msg"]}, state is {result["state"]}.')
+                raise self.AddTasksError(msg=f'添加单个离线任务失败: error_msg为 `{result["error_msg"]}`, state is `{result["state"]}`.')
             print(f'Succeed to Add offline task `{result["name"]}`.')
             success_tasks_count += 1
         else:
@@ -256,23 +256,19 @@ def get_torrent_file_path(path_string) -> Path:
     return p
 
 
-# get chain from __cause__
-def get_exception_chain(e: BaseException) -> List[BaseException]:
-    chain: List[BaseException] = [e]
-    last_exception: BaseException = e
-    while last_exception.__cause__ is not None:
-        chain.append(last_exception.__cause__)
-        last_exception = last_exception.__cause__
-    return chain
-
-
 # return string like '[aaa] -> [bbb] -> [ccc]'
-def format_exception_chain(e: BaseException):
-    return ''.join(f'[{exc}]' if i == 0 else f' -> [{exc}]' for i, exc in enumerate(reversed(get_exception_chain(e))))
+def format_exception_chain(e: BaseException) -> str:
+    # recursive function, get exception chain from __cause__
+    def get_exception_chain(e: BaseException) -> List[BaseException]:
+        return [e] if e.__cause__ is None else [e] + get_exception_chain(e.__cause__)
+
+    # use Exception class name as string if no message in Exception object
+    e2s = lambda e: str(e) or e.__class__.__name__
+    return ''.join(f'[{e2s(exc)}]' if i == 0 else f' -> [{e2s(exc)}]' for i, exc in enumerate(reversed(get_exception_chain(e))))
 
 
 # 命令行入口
-def main() -> None:
+def main() -> int:
     parser = argparse.ArgumentParser(description='115离线下载命令行工具（用于添加115离线下载任务）', formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('-c',
                         '--cookies',
@@ -290,7 +286,7 @@ def main() -> None:
     env_cookies_path: Optional[str] = environ.get(ENV_115_COOKIES_KEY)
     if not args.check and not args.magnet and not args.torrent:
         parser.print_help()
-        exit(0)
+        return 0
     if args.cookies is not None:
         cookies_path: Path = args.cookies
     elif env_cookies_path is not None:
@@ -312,10 +308,10 @@ def main() -> None:
             print(f'检查115cookies文件时因未知原因出错: {format_exception_chain(e)}')
         if check_result == True:
             print(f'The 115 cookies are Ok!')
-            exit(0)
+            return 0
         else:
             print(f'There is something wrong with the 115 cookies.')
-            exit(1)
+            return 1
     urls: List[str] = []
     if args.magnet and len(args.magnet) > 0:
         urls.extend(args.magnet)
@@ -329,7 +325,7 @@ def main() -> None:
             traceback.print_exc(chain=True)
     if len(urls) == 0:
         print(f'没有有效的磁力链接')
-        exit(1)
+        return 1
     # 只取前面15个磁力链接
     if len(urls) > 15:
         print(f'多于15个磁力链接，仅提交前15个')
@@ -352,7 +348,10 @@ def main() -> None:
     except Exception as e:
         print(f'未知原因出错: {format_exception_chain(e)}')
         traceback.print_exc(chain=True)
+    else:
+        return 0
+    return 1
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
