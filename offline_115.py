@@ -18,7 +18,7 @@ __author__: Final[str] = 'owtotwo'
 __copyright__: Final[str] = 'Copyright 2020 owtotwo'
 __credits__: Final[Sequence[str]] = ['owtotwo']
 __license__: Final[str] = 'LGPLv3'
-__version__: Final[str] = '0.1.5'
+__version__: Final[str] = '0.1.6'
 __maintainer__: Final[str] = 'owtotwo'
 __email__: Final[str] = 'owtotwo@163.com'
 __status__: Final[str] = 'Experimental'
@@ -30,10 +30,11 @@ DEFAULT_COOKIES_FILE_PATH: Final[Path] = Path.home() / '.115.cookies'
 class Lixian115:
     DEFAULT_COMMON_HEADERS: Final[Dict[str, str]] = {
         'Connection': 'keep-alive',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'Accept': 'application/json, text/javascript, */*; q=0.01',
         'Origin': 'https://115.com',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36 115Browser/9.1.1',
-        'Referer': 'https://115.com/?mode=wangpan',
+        'Referer': 'https://115.com/?cid=0&offset=0&mode=wangpan',
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'zh-CN,zh;q=0.9',
         'X-Requested-With': 'XMLHttpRequest',
@@ -64,7 +65,7 @@ class Lixian115:
         def __init__(self, msg='使用cookies检查登录状态出错（理应已登录）', *args, **kwargs) -> None:
             super().__init__(msg, *args, **kwargs)
 
-    def __init__(self, cookies_path=None) -> None:
+    def __init__(self, cookies_path: Path=None) -> None:
         self.cookies_path: Path = cookies_path or DEFAULT_COOKIES_FILE_PATH
         if not self.cookies_path.is_file():
             raise self.CookiesFileNotFound
@@ -130,7 +131,7 @@ class Lixian115:
                     print(f'{i+1}. Succeed to Add offline task `{result["name"]}`.')
                     success_tasks_count += 1
                 else:
-                    print(f'{i+1}. Failed to Add one of offline tasks: error_msg is {result["error_msg"]}, url is {result["url"]}.')
+                    print(f'{i+1}. Failed to Add one of offline tasks: error_msg is `{result["error_msg"]}`, url is `{result["url"]}`.')
         return success_tasks_count
 
     # return 115 uid
