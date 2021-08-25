@@ -18,7 +18,7 @@ __author__: Final[str] = 'owtotwo'
 __copyright__: Final[str] = 'Copyright 2020 owtotwo'
 __credits__: Final[Sequence[str]] = ['owtotwo']
 __license__: Final[str] = 'LGPLv3'
-__version__: Final[str] = '0.1.6'
+__version__: Final[str] = '0.1.7'
 __maintainer__: Final[str] = 'owtotwo'
 __email__: Final[str] = 'owtotwo@163.com'
 __status__: Final[str] = 'Experimental'
@@ -111,7 +111,10 @@ class Lixian115:
                 raise self.AddTasksError from e
             if result['state'] != True:
                 raise self.AddTasksError(msg=f'添加单个离线任务失败: error_msg为 `{result["error_msg"]}`, state is `{result["state"]}`.')
-            print(f'Succeed to Add offline task `{result["name"]}`.')
+            try:
+                print(f'Succeed to Add offline task `{result["name"]}`.')
+            except KeyError:
+                print(f'Succeed to Add offline task.')
             success_tasks_count += 1
         else:
             urls: Sequence[str] = url_or_urls
@@ -128,7 +131,10 @@ class Lixian115:
             results = resjson['result']
             for i, result in enumerate(results):
                 if result['state'] == True:
-                    print(f'{i+1}. Succeed to Add offline task `{result["name"]}`.')
+                    try:
+                        print(f'{i+1}. Succeed to Add offline task `{result["name"]}`.')
+                    except KeyError:
+                        print(f'{i+1}. Succeed to Add offline task.')
                     success_tasks_count += 1
                 else:
                     print(f'{i+1}. Failed to Add one of offline tasks: error_msg is `{result["error_msg"]}`, url is `{result["url"]}`.')
